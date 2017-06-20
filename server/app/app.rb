@@ -2,5 +2,5 @@ require 'sinatra'
 require 'sinatra/json'
 
 get '/' do
-  `hostname`.strip
+  "Pod: #{`hostname`.strip}"
 end
