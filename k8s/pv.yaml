@@ -1,0 +1,17 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-www
+  labels:
+    release: stable
+  annotations:
+    volume.beta.kubernetes.io/mount-options: discard
+spec:
+  capacity:
+    storage: 8Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: slow
+  gcePersistentDisk:
+    fsType: ext4
+    pdName: gke-kube-rbac1-69fe573-pvc-e863807a-2fc3-11e7-a7d1-42010af000d4

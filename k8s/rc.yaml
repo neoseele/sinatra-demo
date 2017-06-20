@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: rc
+spec:
+  replicas: 2
+  selector:
+    app: sinatra-demo
+  template:
+    metadata:
+      name: sinatra-demo
+      labels:
+        app: sinatra-demo
+    spec:
+      containers:
+      - name: sinatra-demo
+        image: sinatra-demo
+        ports:
+        - containerPort: 80
