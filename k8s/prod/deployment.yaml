@@ -1,0 +1,51 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: sinatra-prod
+  labels:
+      deployment: sinatra
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25% # default
+      maxUnavailable: 25% # default
+  template:
+    metadata:
+      labels:
+        app: sinatra
+        env: prod
+    spec:
+      nodeSelector:
+          env: prod
+      containers:
+        - name: sinatra
+          image: gcr.io/nmiu-play/sinatra-demo:0.0.2
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 100m
+            limits:
+              memory: 256Mi
+              cpu: 200m
+          ports:
+            - containerPort: 80
+              name: port-www
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /test
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /test
+              port: 80
+              scheme: HTTP
+            initialDelaySeconds: 3
+            timeoutSeconds: 5
