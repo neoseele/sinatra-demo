@@ -15,7 +15,7 @@ node {
   stage "Deploy Application"
   switch (env.BRANCH_NAME) {
     // Roll out to canary or production environment
-    case { "canary" || "master" }:
+    case ["canary","master"]:
         // Change deployed image in canary to the one we just built
         sh("sed -i.bak 's#gcr.io/${project}/${appName}:0.0.2#${imageTag}#' ./k8s/${env.BRANCH_NAME}/deployment.yaml")
         sh("kubectl --namespace=prod apply -f k8s/service.yaml")
