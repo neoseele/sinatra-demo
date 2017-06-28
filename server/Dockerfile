@@ -26,7 +26,6 @@ RUN bundle install
 
 # Add our app
 COPY app /home/app/webapp
-COPY images/ /home/app/webapp/public/images/
 RUN chown -R app:app /home/app
 
 # Clean up when done.
