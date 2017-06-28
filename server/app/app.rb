@@ -50,7 +50,14 @@ class SimpleApp < Sinatra::Base
   end
 
   get '/settings' do
-    json settings
+    a = {}
+    a['db_user'] = settings.username
+    a['db_host'] = settings.username
+    a['db_port'] = settings.username
+    a['db_name'] = settings.database
+    a['app_user'] = settings.admin_user
+    a['app_password'] = settings.admin_password
+    json a
   end
 
   ### protected endpoints
