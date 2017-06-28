@@ -3,13 +3,30 @@ require 'sinatra/json'
 require 'sinatra/activerecord'
 require 'date'
 require 'yaml'
+require './models/resource.rb'
 
 DB_CONFIG = YAML::load(File.open('config/database.yml'))
+SETTINGS = YAML::load(File.open('config/settings.yml'))
 
 set :database, "mysql2://#{DB_CONFIG['username']}@#{DB_CONFIG['host']}:#{DB_CONFIG['port']}/#{DB_CONFIG['database']}"
 
-class Resource < ActiveRecord::Base
-  validates :name, presence: true, uniqueness: true
+helpers do
+  def protected!
+    return if authorized?
+    headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
+    halt 401, "Not authorized\n"
+  end
+
+  def authorized?
+    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+    @auth.provided? \
+      and @auth.basic? \
+      and @auth.credentials \
+      and @auth.credentials == [
+        SETTINGS['admin_username'],
+        SETTINGS['admin_password']
+      ]
+  end
 end
 
 get '/' do
@@ -21,6 +38,7 @@ get '/pod' do
 end
 
 get '/:id' do
+  protected!
   resource =  Resource.find_by_id(params[:id])
 
   if resource
@@ -31,6 +49,7 @@ get '/:id' do
 end
 
 post '/' do
+  protected!
   resource = Resource.create(params)
 
   if resource
@@ -41,6 +60,7 @@ post '/' do
 end
 
 patch '/:id' do
+  protected!
   resource = Resource.find_by_id(params[:id])
 
   if resource
@@ -51,6 +71,7 @@ patch '/:id' do
 end
 
 delete '/:id' do
+  protected!
   resource = Resource.find_by_id(params[:id])
 
   if resource
