@@ -7,7 +7,7 @@ require 'yaml'
 require './models/resource.rb'
 
 class SimpleApp < Sinatra::Base
-  register Sinatra::ConfigFile
+  # register Sinatra::ConfigFile
 
   DB = YAML::load(File.open('config/database.yml'))
   SETTINGS = YAML::load(File.open('config/settings.yml'))
