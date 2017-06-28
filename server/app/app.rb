@@ -13,7 +13,7 @@ class SimpleApp < Sinatra::Base
   config_file 'config/database.yml'
   config_file 'config/settings.yml'
 
-  set :database, "mysql2://#{settings.username}@#{settings.host}:#{settings.port}/#{settings.database}"
+  set :database, "mysql2://#{settings.user}@#{settings.host}:#{settings.port}/#{settings.name}"
   set :port, 4567
 
   helpers do
@@ -51,12 +51,14 @@ class SimpleApp < Sinatra::Base
 
   get '/settings' do
     a = {}
-    a['db_user'] = settings.username
-    a['db_host'] = settings.username
-    a['db_port'] = settings.username
-    a['db_name'] = settings.database
+    a['db_user'] = settings.user
+    a['db_host'] = settings.host
+    a['db_port'] = settings.port
+    a['db_name'] = settings.name
     a['app_user'] = settings.admin_user
-    a['app_password'] = settings.admin_password
+    a['app_pwd'] = settings.admin_password
+    a['app_user_env'] = ENV['APP_ADMIN_USER']
+    a['app_pwd_env'] = ENV['APP_ADMIN_PASSWORD']
     json a
   end
 
