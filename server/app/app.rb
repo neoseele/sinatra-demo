@@ -3,8 +3,6 @@ require 'sinatra/base'
 require 'sinatra/json'
 require 'sinatra/activerecord'
 require "sinatra/config_file"
-# require 'date'
-# require 'yaml'
 require './models/resource.rb'
 
 class SimpleApp < Sinatra::Base
@@ -47,20 +45,6 @@ class SimpleApp < Sinatra::Base
 
   get '/test' do
     File.read(File.join('public', 'test.html'))
-  end
-
-  get '/settings' do
-    a = {}
-    a['db_user'] = settings.user
-    a['db_host'] = settings.host
-    a['db_port'] = settings.port
-    a['db_name'] = settings.name
-    a['app_user'] = settings.admin_user
-    a['app_pwd'] = settings.admin_password
-    a['app_user_env'] = ENV['APP_ADMIN_USER']
-    a['app_pwd_env'] = ENV['APP_ADMIN_PASSWORD']
-    a['env'] = ENV
-    json a
   end
 
   ### protected endpoints
