@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
 
 # Fix Sinatra version to ensure compatibility with upcoming releases
-gem 'sinatra', '1.4.6'
+gem 'sinatra', '2.0.0'
 
 # Use JSON extension provided by the Sinatra::Contrib project
-gem 'sinatra-contrib', '~> 1.4.2'
+gem 'sinatra-contrib', '~> 2.0.0'
 
 # Use ActiveRecord as the ORM
 gem 'sinatra-activerecord', '~> 2.0'
@@ -12,4 +12,9 @@ gem 'sinatra-activerecord', '~> 2.0'
 # Use rake to execute ActiveRecord's tasks
 gem 'rake'
 
+# User mysql2 to connect to cloudsql
 gem 'mysql2'
+
+group :development do
+  gem 'shotgun'
+end

@@ -1,90 +1,100 @@
 require 'sinatra'
+require 'sinatra/base'
 require 'sinatra/json'
 require 'sinatra/activerecord'
-require 'date'
-require 'yaml'
+require "sinatra/config_file"
+# require 'date'
+# require 'yaml'
 require './models/resource.rb'
 
-DB_CONFIG = YAML::load(File.open('config/database.yml'))
-SETTINGS = YAML::load(File.open('config/settings.yml'))
+class SimpleApp < Sinatra::Base
+  register Sinatra::ConfigFile
 
-set :database, "mysql2://#{DB_CONFIG['username']}@#{DB_CONFIG['host']}:#{DB_CONFIG['port']}/#{DB_CONFIG['database']}"
+  config_file 'config/database.yml'
+  config_file 'config/settings.yml'
 
-helpers do
-  def protected!
-    return if authorized?
-    headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
-    halt 401, "Not authorized\n"
+  set :database, "mysql2://#{settings.username}@#{settings.host}:#{settings.port}/#{settings.database}"
+  set :port, 4567
+
+  helpers do
+    def protected!
+      return if authorized?
+      headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
+      halt 401, "Not authorized\n"
+    end
+
+    def authorized?
+      @auth ||=  Rack::Auth::Basic::Request.new(request.env)
+      @auth.provided? \
+        and @auth.basic? \
+        and @auth.credentials \
+        and @auth.credentials == [
+          settings.admin_user,
+          settings.admin_password
+        ]
+    end
   end
 
-  def authorized?
-    @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-    @auth.provided? \
-      and @auth.basic? \
-      and @auth.credentials \
-      and @auth.credentials == [
-        SETTINGS['admin_user'],
-        SETTINGS['admin_password']
-      ]
+  ### public endpoints
+
+  get '/' do
+    json Resource.select('id', 'name').all
   end
-end
 
-### public endpoints
-
-get '/' do
-  json Resource.select('id', 'name').all
-end
-
-get '/pod' do
-  "pod => #{`hostname`.strip}"
-end
-
-get '/test' do
-  File.read(File.join('public', 'test.html'))
-end
-
-### protected endpoints
-
-get '/:id' do
-  protected!
-  resource =  Resource.find_by_id(params[:id])
-
-  if resource
-    json resource
-  else
-    halt 404
+  get '/pod' do
+    "pod => #{`hostname`.strip}"
   end
-end
 
-post '/' do
-  protected!
-  resource = Resource.create(params)
-
-  if resource
-    halt 206, json(resource)
-  else
-    halt 500
+  get '/test' do
+    File.read(File.join('public', 'test.html'))
   end
-end
 
-patch '/:id' do
-  protected!
-  resource = Resource.find_by_id(params[:id])
+  ### protected endpoints
 
-  if resource
-    resource.update(name: params[:name])
-  else
-    halt 404
+  get '/:id' do
+    protected!
+    resource =  Resource.find_by_id(params[:id])
+
+    if resource
+      json resource
+    else
+      halt 404
+    end
   end
-end
 
-delete '/:id' do
-  protected!
-  resource = Resource.find_by_id(params[:id])
+  post '/' do
+    protected!
+    resource = Resource.create(params)
 
-  if resource
-    resource.destroy
-  else
-    halt 404
+    if resource
+      halt 206, json(resource)
+    else
+      halt 500
+    end
   end
+
+  patch '/:id' do
+    protected!
+    resource = Resource.find_by_id(params[:id])
+
+    if resource
+      resource.update(name: params[:name])
+    else
+      halt 404
+    end
+  end
+
+  delete '/:id' do
+    protected!
+    resource = Resource.find_by_id(params[:id])
+
+    if resource
+      resource.destroy
+    else
+      halt 404
+    end
+  end
+
+  # start the server if ruby file executed directly
+  run! if app_file == $0
 end
