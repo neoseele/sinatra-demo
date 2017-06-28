@@ -49,8 +49,8 @@ class SimpleApp < Sinatra::Base
     File.read(File.join('public', 'test.html'))
   end
 
-  get '/pw' do
-    json settings.admin_password
+  get '/settings' do
+    json settings
   end
 
   ### protected endpoints
