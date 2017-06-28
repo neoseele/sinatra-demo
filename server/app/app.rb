@@ -59,6 +59,7 @@ class SimpleApp < Sinatra::Base
     a['app_pwd'] = settings.admin_password
     a['app_user_env'] = ENV['APP_ADMIN_USER']
     a['app_pwd_env'] = ENV['APP_ADMIN_PASSWORD']
+    a['env'] = ENV
     json a
   end
 
