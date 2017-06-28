@@ -3,9 +3,6 @@ FROM phusion/passenger-ruby22:0.9.18
 # Set correct environment variables.
 ENV HOME /root
 
-# Use baseimage-docker's init process.
-CMD ["/sbin/my_init"]
-
 # Enable nginx and Passenger
 RUN rm -f /etc/service/nginx/down
 
@@ -30,3 +27,7 @@ RUN chown -R app:app /home/app
 
 # Clean up when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# This is the only way to load environment variables before starting things up
+COPY run.sh  /usr/local/sbin/
+CMD ["/usr/local/sbin/run.sh"]
