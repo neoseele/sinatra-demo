@@ -1,2 +1,2 @@
-admin_user: ENV['APP_ADMIN_USER']
-admin_password: ENV['APP_ADMIN_PASSWORD']
+admin_user: <%= ENV['APP_ADMIN_USER'] %>
+admin_password: <%= ENV['APP_ADMIN_PASSWORD'] %>
