@@ -1,5 +1,5 @@
 adapter: mysql2
-name: sinatra
-user: proxyuser
+database: sinatra
+username: proxyuser
 host: 127.0.0.1
 port: 3306

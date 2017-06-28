@@ -2,16 +2,17 @@ require 'sinatra'
 require 'sinatra/base'
 require 'sinatra/json'
 require 'sinatra/activerecord'
-require "sinatra/config_file"
+# require "sinatra/config_file"
+require 'yaml'
 require './models/resource.rb'
 
 class SimpleApp < Sinatra::Base
   register Sinatra::ConfigFile
 
-  config_file 'config/database.yml'
-  config_file 'config/settings.yml'
+  DB = YAML::load(File.open('config/database.yml'))
+  SETTINGS = YAML::load(File.open('config/settings.yml'))
 
-  set :database, "mysql2://#{settings.user}@#{settings.host}:#{settings.port}/#{settings.name}"
+  set :database, "mysql2://#{DB['username']}@#{DB['host']}:#{DB['port']}/#{DB['database']}"
   set :port, 4567
 
   helpers do
@@ -27,8 +28,8 @@ class SimpleApp < Sinatra::Base
         and @auth.basic? \
         and @auth.credentials \
         and @auth.credentials == [
-          settings.admin_user,
-          settings.admin_password
+          SETTINGS['admin_user'],
+          SETTINGS['admin_password']
         ]
     end
   end
