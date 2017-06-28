@@ -1,0 +1,84 @@
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: sinatra-dev
+  labels:
+    deployment: sinatra
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25% # default
+      maxUnavailable: 25% # default
+  template:
+    metadata:
+      labels:
+        app: sinatra
+        env: dev
+    spec:
+      nodeSelector:
+        env: canary
+      containers:
+      # [START app_container]
+      - name: sinatra
+        image: gcr.io/nmiu-play/sinatra-demo:0.0.2
+        env:
+          # [START app_secrets]
+          - name: APP_ADMIN_USER
+            value: admin
+          - name: APP_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: sinatra-credentials
+                key: admin_password
+          # [END app_secrets]
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 200m
+        ports:
+          - containerPort: 80
+            name: port-www
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /pod
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /pod
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 3
+          timeoutSeconds: 5
+      # [END app_container]
+      # [START proxy_container]
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.09
+        command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+                  "-instances=nmiu-play:us-central1:sinatra1=tcp:3306",
+                  "-credential_file=/secrets/cloudsql/cloudsqlclient.json"]
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+          - name: cloudsql
+            mountPath: /cloudsql
+      # [END proxy_container]
+      # [START volumes]
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: cloudsql
+          emptyDir:
+      # [END volumes]

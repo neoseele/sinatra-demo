@@ -23,11 +23,13 @@ helpers do
       and @auth.basic? \
       and @auth.credentials \
       and @auth.credentials == [
-        SETTINGS['admin_username'],
+        SETTINGS['admin_user'],
         SETTINGS['admin_password']
       ]
   end
 end
+
+### public endpoints
 
 get '/' do
   json Resource.select('id', 'name').all
@@ -36,6 +38,12 @@ end
 get '/pod' do
   "pod => #{`hostname`.strip}"
 end
+
+get '/test' do
+  File.read(File.join('public', 'test.html'))
+end
+
+### protected endpoints
 
 get '/:id' do
   protected!
