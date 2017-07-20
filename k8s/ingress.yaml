@@ -6,5 +6,5 @@ metadata:
   name: sinatra-ingress
 spec:
   backend:
-    serviceName: sinatra
+    serviceName: sinatra-demo
     servicePort: 80
