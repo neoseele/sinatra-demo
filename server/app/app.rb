@@ -41,7 +41,7 @@ class SimpleApp < Sinatra::Base
   end
 
   get '/pod' do
-    "pod => #{`hostname`.strip}"
+    "pod => #{`hostname`.strip} (dev)"
   end
 
   get '/test' do
