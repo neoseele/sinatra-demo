@@ -46,7 +46,7 @@ spec:
             protocol: TCP
         livenessProbe:
           httpGet:
-            path: /pod
+            path: /resources
             port: 80
             scheme: HTTP
           initialDelaySeconds: 30
@@ -55,7 +55,7 @@ spec:
           failureThreshold: 5
         readinessProbe:
           httpGet:
-            path: /pod
+            path: /resources
             port: 80
             scheme: HTTP
           initialDelaySeconds: 3
