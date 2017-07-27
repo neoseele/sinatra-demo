@@ -37,10 +37,6 @@ class SimpleApp < Sinatra::Base
   ### public endpoints
 
   get '/' do
-    json Resource.select('id', 'name').all
-  end
-
-  get '/pod' do
     "pod => #{`hostname`.strip}"
   end
 
@@ -48,9 +44,13 @@ class SimpleApp < Sinatra::Base
     File.read(File.join('public', 'test.html'))
   end
 
+  get '/resources' do
+    json Resource.select('id', 'name').all
+  end
+
   ### protected endpoints
 
-  get '/:id' do
+  get '/resources/:id' do
     protected!
     resource =  Resource.find_by_id(params[:id])
 
