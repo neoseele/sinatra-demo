@@ -49,8 +49,8 @@ class SimpleApp < Sinatra::Base
   end
 
   get '/stress' do
-    out=`dd if=/dev/zero of=/dev/null bs=10240 count=1000 2>&1`
-    "#{out}!"
+    "stress!!!"
+    `dd if=/dev/zero of=/dev/null bs=10240 count=1000 2>&1`
   end
 
   ### protected endpoints
