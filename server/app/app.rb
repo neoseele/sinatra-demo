@@ -48,6 +48,10 @@ class SimpleApp < Sinatra::Base
     json Resource.select('id', 'name').all
   end
 
+  get '/stress' do
+    `dd if=/dev/zero of=/dev/null bs=10240 count=1000`
+  end
+
   ### protected endpoints
 
   get '/resources/:id' do
