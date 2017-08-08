@@ -5,6 +5,8 @@ metadata:
     kubernetes.io/ingress.global-static-ip-name: sinatra-ingress
   name: sinatra-ingress
 spec:
+  tls:
+    - secretName: sinatra-tls
   backend:
     serviceName: sinatra-demo
     servicePort: 80
