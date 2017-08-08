@@ -3,14 +3,17 @@ node {
   def appName = 'sinatra-demo'
   def feSvcName = "${appName}"
   def imageTag = "gcr.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+  def imageTagLatest = "gcr.io/${project}/${appName}:${env.BRANCH_NAME}.latest"
 
   checkout scm
 
   stage 'Build image'
   sh("docker build -t ${imageTag} server")
+  sh("docker tag ${imageTag} ${imageTagLatest}")
 
   stage 'Push image to registry'
   sh("gcloud docker -- push ${imageTag}")
+  sh("gcloud docker -- push ${imageTagLatest}")
 
   stage "Deploy Application"
   switch (env.BRANCH_NAME) {
