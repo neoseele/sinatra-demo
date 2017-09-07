@@ -5,6 +5,7 @@ require 'sinatra/activerecord'
 # require "sinatra/config_file"
 require 'yaml'
 require './models/resource.rb'
+require './helpers/hostinfo.rb'
 
 class SimpleApp < Sinatra::Base
   # register Sinatra::ConfigFile
@@ -53,6 +54,11 @@ class SimpleApp < Sinatra::Base
   # end
 
   ### protected endpoints
+
+  get '/hostinfo' do
+    protected!
+    json hostinfo
+  end
 
   get '/resources/:id' do
     protected!

@@ -7,11 +7,13 @@ module Sinatra
     FORWARDED_IPS = 'network-interfaces/0/forwarded-ips/'
 
     def hostinfo
-      hostname = read_metadata('hostname')
-      ip = read_metadata('0/ip')
-      forwarded_ips = read_metadata(FORWARDED_IPS).map do |i|
+      info = {}
+      info[:hostname] = read_metadata('hostname')[0]
+      info[:ip] = read_metadata('0/ip')[0]
+      info[:forwarded_ips] = read_metadata(FORWARDED_IPS).map do |i|
         read_metadata("#{FORWARDED_IPS}/#{i}")[0]
       end
+      info
     end
 
     def read_metadata(path)
