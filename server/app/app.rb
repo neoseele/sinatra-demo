@@ -61,7 +61,9 @@ class SimpleApp < Sinatra::Base
 
     result = {}
     fetch_instance('instance/', result)
-    json result
+
+    content_type :text
+    return JSON.pretty_generate(result)
   end
 
   get '/resources/:id' do
