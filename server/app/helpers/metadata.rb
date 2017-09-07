@@ -3,10 +3,10 @@ require 'open-uri'
 
 module Sinatra
   module MetadataHelper
-    METADATA = 'http://metadata.google.internal/computeMetadata/v1beta1/instance/'
+    METADATA = 'http://metadata.google.internal/computeMetadata/v1beta1/'
 
     def fetch_instance(uri, result={})
-      read_metadata(uri, result).map do |var|
+      read_metadata(uri, result).each do |var|
         if var =~ /\/$/
           fetch_instance(uri+var, result) unless var =~ /service-accounts/
         else
