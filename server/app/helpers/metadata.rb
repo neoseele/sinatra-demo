@@ -18,7 +18,7 @@ module Sinatra
     def read_metadata(path, result)
       uri = "#{METADATA}#{path}"
       open(uri, 'Metadata-Flavor' => 'Google').readlines.map do |line|
-        result[path] = line unless path =~ /\/$/
+        result[path] = line.strip unless path =~ /\/$/
         line.strip
       end
     end
