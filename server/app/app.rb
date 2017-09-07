@@ -8,6 +8,7 @@ require './models/resource.rb'
 require './helpers/hostinfo.rb'
 
 class SimpleApp < Sinatra::Base
+  helpers Sinatra::HostinfoHelper
   # register Sinatra::ConfigFile
 
   DB = YAML::load(File.open('config/database.yml'))
