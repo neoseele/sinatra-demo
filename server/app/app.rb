@@ -5,10 +5,10 @@ require 'sinatra/activerecord'
 # require "sinatra/config_file"
 require 'yaml'
 require './models/resource.rb'
-require './helpers/hostinfo.rb'
+require './helpers/metadata.rb'
 
 class SimpleApp < Sinatra::Base
-  helpers Sinatra::HostinfoHelper
+  helpers Sinatra::MetadataHelper
   # register Sinatra::ConfigFile
 
   DB = YAML::load(File.open('config/database.yml'))
@@ -57,8 +57,11 @@ class SimpleApp < Sinatra::Base
   ### protected endpoints
 
   get '/hostinfo' do
-    # protected!
-    json hostinfo
+    protected!
+
+    result = {}
+    fetch_instance('instance/', result)
+    json result
   end
 
   get '/resources/:id' do
