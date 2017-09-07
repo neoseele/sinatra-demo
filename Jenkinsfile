@@ -12,8 +12,11 @@ node {
   sh("docker tag ${imageTag} ${imageTagLatest}")
 
   stage 'Push image to registry'
-  sh("gcloud docker -- push ${imageTag}")
-  sh("gcloud docker -- push ${imageTagLatest}")
+  withCredentials([file(credentialsId: 'jenkin-ci-service-account', variable: 'KEY_FILE')]) {
+    sh "gcloud auth activate-service-account --key-file=${KEY_FILE}"
+    sh("gcloud docker -- push ${imageTag}")
+    sh("gcloud docker -- push ${imageTagLatest}")
+  }
 
   stage "Deploy Application"
   switch (env.BRANCH_NAME) {
