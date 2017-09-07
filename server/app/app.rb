@@ -57,7 +57,7 @@ class SimpleApp < Sinatra::Base
   ### protected endpoints
 
   get '/hostinfo' do
-    protected!
+    # protected!
     json hostinfo
   end
 
