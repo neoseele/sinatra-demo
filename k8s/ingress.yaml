@@ -3,6 +3,7 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.global-static-ip-name: sinatra-ingress
+    kubernetes.io/ingress.class: gce
   name: sinatra-ingress
 spec:
   tls:
