@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: sinatra-ingress-nic
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/rewrite-target: /
+    # ingress.kubernetes.io/ssl-redirect: false
+  namespace: dev
+spec:
+  tls:
+    - hosts:
+      - nmiu.premium-cloud-support.com
+      secretName: sinatra-tls
+  rules:
+    - host: nmiu.premium-cloud-support.com
+      http:
+        paths:
+          - path: /sinatra
+            backend:
+              serviceName: sinatra-demo
+              servicePort: 80
